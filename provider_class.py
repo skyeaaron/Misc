@@ -31,13 +31,16 @@ class Provider:
             return False
       
     def classify(self, prov2):
-        """ if there is a match with prov2:
-            set id and/or study_arm based on prov2 only if they are None """
-        if self.match_prov(prov2):
-            if self.id is None:
-                self.id = prov2.id
-            if self.study_arm is None:
-                self.study_arm = prov2.study_arm
+        """ set id and/or study_arm based on prov2
+            set id to borrow from prov2 if prov2.id is bigger (whoops)
+            set study arm to borrow from prov2 so long as study arm is not
+            intervention. does not overwrite Intervention with Control or None"""
+        if self.id is None:
+            self.id = prov2.id
+        elif self.id < prov2.id:
+            self.id = prov2.id
+        if self.study_arm != "Intervention" and prov2.study_arm is not None:
+            self.study_arm = prov2.study_arm
         return None
         
     def reclassify(self, prov2):
